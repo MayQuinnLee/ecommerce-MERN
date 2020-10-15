@@ -9,7 +9,7 @@ const HomeScreen = () => {
       <h1>Latest Classes</h1>
       <Row>
         {classes.map(classroom => (
-          <Col sm={12} md={6} lg={4} xl={3}>
+          <Col key={classroom._id} sm={12} md={6} lg={4} xl={3}>
             <Classroom classroom={classroom} />
           </Col>
         ))}
