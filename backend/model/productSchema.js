@@ -20,7 +20,7 @@ const productSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  brand: {
+  instructor: {
     type: String,
     required: true
   },
@@ -48,7 +48,7 @@ const productSchema = mongoose.Schema({
     required: true,
     default: 0
   },
-  countInStock: {
+  slotsAvailable: {
     type: Number,
     required: true,
     default: 0

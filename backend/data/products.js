@@ -1,6 +1,5 @@
 const products = [
   {
-    _id: '1',
     name: 'Power of Breath',
     image: '/images/breath.jpg',
     description:
@@ -13,7 +12,6 @@ const products = [
     numReviews: 5,
   },
   {
-    _id: '2',
     name: 'Psychic Sleep',
     image: '/images/sleep-relaxation.jpg',
     description:
@@ -26,7 +24,6 @@ const products = [
     numReviews: 1,
   },
   {
-    _id: '3',
     name: 'Healing Sound Bath',
     image: '/images/sound-bath.jpg',
     description:
@@ -39,7 +36,6 @@ const products = [
     numReviews: 6,
   },
   {
-    _id: '4',
     name: 'Fluid Flow Flexibility',
     image: '/images/flexibility.jpg',
     description:
@@ -52,7 +48,6 @@ const products = [
     numReviews: 5,
   },
   {
-    _id: '5',
     name: 'Inverted Mind',
     image: '/images/inversion.jpg',
     description:
@@ -65,7 +60,6 @@ const products = [
     numReviews: 5,
   },
   {
-    _id: '6',
     name: 'The Power of Yoga',
     image: '/images/strength.jpg',
     description:
