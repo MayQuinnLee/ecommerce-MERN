@@ -3,9 +3,9 @@ import connectDB from './config/db.js'
 import dotenv from 'dotenv'
 import products from './data/products.js'
 import users from './data/users.js'
-import Order from './model/orderSchema.js'
-import Product from './model/productSchema.js'
-import User from './model/userSchema.js'
+import Order from './model/orderModel.js'
+import Product from './model/productModel.js'
+import User from './model/userModel.js'
 
 dotenv.config()
 
