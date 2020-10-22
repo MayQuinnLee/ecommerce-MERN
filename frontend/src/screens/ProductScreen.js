@@ -8,7 +8,7 @@ import Loader from '../components/Loader'
 import Message from '../components/Message'
 
 const ProductScreen = ({ history, match }) => {
-  const [qty, setQty] = useState(0)
+  const [qty, setQty] = useState(1)
 
   const dispatch = useDispatch()
   const productDetails = useSelector(state => state.productDetails)
@@ -87,7 +87,9 @@ const ProductScreen = ({ history, match }) => {
                             onChange={(e => setQty(e.target.value))}>
                             {
                               [...Array(product.slotsAvailable).keys()].map(x => (
-                                <option key={x + 1} value={x + 1}> {x + 1} </option>
+                                <option key={x + 1} value={x + 1}>
+                                  {x + 1}
+                                </option>
                               ))
                             }
                           </Form.Control>
