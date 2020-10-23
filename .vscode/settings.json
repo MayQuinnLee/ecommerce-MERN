@@ -1,3 +1,4 @@
 {
-  "git.ignoreLimitWarning": false
+  "git.ignoreLimitWarning": false,
+  "javascript.validate.enable": false
 }
