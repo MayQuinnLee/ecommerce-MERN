@@ -37,7 +37,7 @@ const PlaceOrderScreen = ({ history }) => {
       paymentMethod: cart.paymentMethod,
       itemsPrice: cart.itemsPrice,
       taxPrice: cart.taxPrice,
-      totalPrice: cart.taxPrice,
+      totalPrice: cart.totalPrice,
       shippingPrice: cart.shippingPrice
     }))
   }
