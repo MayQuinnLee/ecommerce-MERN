@@ -1,25 +1,55 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { Col, Row, Card, ListGroup, Image } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
+import { PayPalButton } from "react-paypal-button-v2";
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getOrderDetails } from '../actions/orderActions'
+import { getOrderDetails, payOrder } from '../actions/orderActions'
+import { ORDER_PAY_RESET } from '../constants/orderConstants'
 
 const OrderScreen = ({ match }) => {
   const orderId = match.params.id
+
+  const [sdkReady, setSdkReady] = useState(false)
 
   const dispatch = useDispatch()
 
   const orderDetails = useSelector(state => state.orderDetails)
   const { loading, order, error } = orderDetails
 
+  const orderPay = useSelector(state => state.orderPay)
+  const { loading: loadingPay, success: successPay } = orderPay
+
   useEffect(() => {
-    if (!order || order._id !== orderId) {
-      dispatch(getOrderDetails(orderId))
+    const addPayPalScript = async () => {
+      const { data: clientId } = await axios.get('/api/config/paypal')
+      const script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
+      script.async = true
+      script.onload = () => { setSdkReady(true) }
+      document.body.appendChild(script)
     }
-    // eslint-disable-next-line
-  }, [order, orderId])
+
+    if (!order || order._id !== orderId || successPay) {
+      dispatch({ type: ORDER_PAY_RESET })
+      //if you dont put this, when you pay, it will keep refreshing, successPay will always be true
+      dispatch(getOrderDetails(orderId))
+    } else if (!order.isPaid) {
+      if (!window.paypal) {
+        addPayPalScript()
+      }
+    } else {
+      setSdkReady(true)
+    }
+  }, [dispatch, order, orderId, successPay])
+
+  const successPaymentHandler = (paymentResult) => {
+    console.log(paymentResult)
+    dispatch(payOrder(orderId, paymentResult))
+  }
 
   return loading
     ? (<Loader />)
@@ -123,8 +153,17 @@ const OrderScreen = ({ match }) => {
                     <Col>${order.totalPrice}</Col>
                   </Row>
                 </ListGroup.Item>
+                {!order.isPaid && (
+                  <ListGroup.Item>
+                    {loadingPay && <Loader />}
+                    {!sdkReady ? <Loader /> : (
+                      <PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler} />
+                    )}
+                  </ListGroup.Item>
+                )}
 
               </ListGroup>
+
             </Card>
           </Col>
         </Row>
