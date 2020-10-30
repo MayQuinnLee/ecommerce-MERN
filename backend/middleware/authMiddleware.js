@@ -11,10 +11,10 @@ const protect = asyncHandler(async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1]
       const decoded = jwt.verify(token, process.env.JWT_SECRET)
-      console.log(`protect - ${decoded}`)
+      console.log(`protect, decoded - ${decoded}`)
 
       req.user = await User.findById(decoded.id).select('-password')
-      console.log(`protect - ${req.user}`)
+      console.log(`protect, req.user - ${req.user}`)
 
       next()
 
@@ -31,4 +31,13 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 })
 
-export { protect } 
+const isAdmin = asyncHandler((req, res, next) => {
+  if (req.user && req.user.isAdmin) {
+    next()
+  } else {
+    res.status(401)
+    throw new Error('Not authorized as admin')
+  }
+})
+
+export { protect, isAdmin } 
