@@ -141,5 +141,49 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
 })
 
+// @desc  Get user by ID
+// @route GET /api/users/:id
+// @access Private/Admin 
 
-export { authUser, getUserProfile, registerUser, updateUserProfile, getUsers, deleteUser }
+const getUserById = asyncHandler(async (req, res) => {
+
+  const user = await User.findById(req.params.id).select('-password')
+
+  if (user) {
+    res.json(user)
+  } else {
+    res.status(404)
+    throw new Error('User not found)')
+  }
+})
+
+// @desc  Update user
+// @route PUT /api/users/:id
+// @access Private/Ad min 
+
+const updateUser = asyncHandler(async (req, res) => {
+
+  const user = await User.findById(req.params.id).select('-password')
+
+  if (user) {
+    user.name = req.body.name || user.name
+    user.email = req.body.email || user.email
+    user.isAdmin = req.body.isAdmin
+    //'user.idAdmin' is removed, because if req.body is false, we will use what is already in the system, which might be true or false, this will prevent us from setting the 'isAdmin'. If we are trying to set it to false in the system. then system will then choose 'or' option 'user.isAdmin'
+
+    const updatedUser = await user.save()
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin
+    })
+
+  } else {
+    res.status(404)
+    throw new Error('User not found)')
+  }
+})
+
+export { authUser, getUserProfile, registerUser, updateUserProfile, getUsers, deleteUser, getUserById, updateUser }
