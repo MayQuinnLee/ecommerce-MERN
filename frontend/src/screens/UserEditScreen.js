@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getUserDetails, updateUserProfile } from '../actions/userActions'
+import { getUserDetails, updateUser } from '../actions/userActions'
 import FormContainer from '../components/FormContainer'
 
 const UserEditScreen = ({ history, match }) => {
@@ -22,6 +22,9 @@ const UserEditScreen = ({ history, match }) => {
   const userDetails = useSelector(state => state.userDetails)
   const { loading, error, user } = userDetails
 
+  const userUpdated = useSelector(state => state.userUpdated)
+  const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } = userUpdated
+
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
       if (!user || user._id !== userId) {
@@ -38,7 +41,7 @@ const UserEditScreen = ({ history, match }) => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(updateUserProfile(userId, { name, email, isAdmin }))
+    dispatch(updateUser(userId, { name, email, isAdmin }))
   }
 
   return (
@@ -57,7 +60,7 @@ const UserEditScreen = ({ history, match }) => {
 
                 <Form.Group controlId='name'>
                   <Form.Label>Username</Form.Label>
-                  <Form.Control type='name' placeholder={'Enter username'} value={name} onChange={e => setName(e.target.value)}
+                  <Form.Control type='name' placeholder='Enter username' value={name} onChange={e => setName(e.target.value)}
                   ></Form.Control>
                 </Form.Group>
 
@@ -73,7 +76,16 @@ const UserEditScreen = ({ history, match }) => {
                   ></Form.Check>
                 </Form.Group>
 
-                <Button type='submit' variant='primary'>Update</Button>
+                <Button type='submit' variant='primary' className='my-3'>Update</Button>
+
+                {errorUpdate ?
+                  (<Message variant='danger'>{errorUpdate}</Message>)
+                  : successUpdate ?
+                    (<Message>Updated!</Message>)
+                    : loadingUpdate ?
+                      (<Loader />)
+                      : (<></>)
+                }
 
               </Form>
             )}
