@@ -22,8 +22,8 @@ const UserEditScreen = ({ history, match }) => {
   const userDetails = useSelector(state => state.userDetails)
   const { loading, error, user } = userDetails
 
-  const userUpdated = useSelector(state => state.userUpdated)
-  const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } = userUpdated
+  const userUpdate = useSelector(state => state.userUpdate)
+  const { loading: loadingUpdate, error: errorUpdate, success: successUpdate } = userUpdate
 
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {

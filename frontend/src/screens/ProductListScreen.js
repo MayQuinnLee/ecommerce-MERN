@@ -4,7 +4,8 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { listProducts, deleteProduct } from '../actions/productActions'
+import { listProducts, deleteProduct, createProduct } from '../actions/productActions'
+import { PRODUCT_CREATE_RESET } from '../constants/productConstants'
 
 const ProductListScreen = ({ history }) => {
   const dispatch = useDispatch()
@@ -18,6 +19,9 @@ const ProductListScreen = ({ history }) => {
   const productDelete = useSelector(state => state.productDelete)
   const { success } = productDelete
 
+  const productCreate = useSelector(state => state.productCreate)
+  const { success: successCreate, createdProduct, error: errorCreate } = productCreate
+
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listProducts())
@@ -25,7 +29,12 @@ const ProductListScreen = ({ history }) => {
       history.push('/')
     }
 
-  }, [dispatch, history, userInfo, success])
+    if (successCreate) {
+      history.push(`/admin/product/${createdProduct._id}/edit`)
+      dispatch({ type: PRODUCT_CREATE_RESET })
+    }
+
+  }, [dispatch, history, userInfo, success, successCreate])
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure?')) {
@@ -34,7 +43,7 @@ const ProductListScreen = ({ history }) => {
   }
 
   const createProductHandler = () => {
-    console.log('create product')
+    dispatch(createProduct())
   }
 
   return (
@@ -44,7 +53,7 @@ const ProductListScreen = ({ history }) => {
           <h1>Products</h1>
         </Col>
         <Col className='text-right'>
-          <Button className='btn-sm my-3' onClick={() => createProductHandler}>
+          <Button className='btn-sm my-3' onClick={createProductHandler}>
             <i className='fas fa-plus'> Create Product</i>
           </Button>
         </Col>

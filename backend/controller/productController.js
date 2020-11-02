@@ -40,4 +40,60 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
 })
 
-export { getProducts, getProductById, deleteProduct }
+// @desc  Create a product
+// @route POST /api/products
+// @access Private/Admin
+const createProduct = asyncHandler(async (req, res) => {
+  const product = new Product({
+    name: 'Sample Nameeee',
+    price: 0,
+    slotsAvailable: 0,
+    image: 'sample image',
+    user: req.user._id,
+    instructor: 'Sample instructor',
+    category: 'Sample category',
+    description: 'Sample description'
+  })
+
+  const createdProduct = await product.save()
+
+  if (createdProduct) {
+    res.status(201).json(createdProduct)
+  } else {
+    res.status(500)
+    throw new Error('Product not created')
+  }
+})
+
+
+// @desc  Update a single product
+// @route PUT /api/products/:id
+// @access Private/Admin
+const updateProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id)
+
+  const { name } = req.body
+  const productExists = await Product.findOne({ name })
+
+  if (productExists) {
+    res.status(400)
+    throw new Error('Product already exist')
+  } else if (product) {
+    product.name = req.body.name || product.name
+    product.price = req.body.price || product.price
+    product.category = req.body.category || product.category
+    product.description = req.body.description || product.description
+    product.instructor = req.body.instructor || product.instructor
+    product.image = req.body.image || product.image
+    product.slotsAvailable = req.body.slotsAvailable || product.slotsAvailable
+
+    const updatedProduct = await product.save()
+
+    res.json(updatedProduct)
+  } else {
+    res.status(404)
+    throw new Error('Product not found')
+  }
+})
+
+export { getProducts, getProductById, deleteProduct, updateProduct, createProduct }
