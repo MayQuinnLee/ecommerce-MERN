@@ -48,7 +48,7 @@ const createProduct = asyncHandler(async (req, res) => {
     name: 'Sample Nameeee',
     price: 0,
     slotsAvailable: 0,
-    image: 'sample image',
+    image: 'Sample image',
     user: req.user._id,
     instructor: 'Sample instructor',
     category: 'Sample category',
@@ -72,13 +72,7 @@ const createProduct = asyncHandler(async (req, res) => {
 const updateProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id)
 
-  const { name } = req.body
-  const productExists = await Product.findOne({ name })
-
-  if (productExists) {
-    res.status(400)
-    throw new Error('Product already exist')
-  } else if (product) {
+  if (product) {
     product.name = req.body.name || product.name
     product.price = req.body.price || product.price
     product.category = req.body.category || product.category

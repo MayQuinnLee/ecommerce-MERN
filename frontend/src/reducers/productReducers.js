@@ -68,7 +68,7 @@ export const productCreateReducer = (state = {}, action) => {
 export const productUpdateReducer = (state = {}, action) => {
   switch (action.type) {
     case (PRODUCT_UPDATE_REQUEST): {
-      return { loading: true }
+      return { loading: true, }
     }
     case (PRODUCT_UPDATE_SUCCESS): {
       return { loading: false, success: true }

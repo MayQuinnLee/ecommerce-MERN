@@ -20,11 +20,12 @@ const ProductListScreen = ({ history }) => {
   const { success } = productDelete
 
   const productCreate = useSelector(state => state.productCreate)
-  const { success: successCreate, createdProduct, error: errorCreate } = productCreate
+  const { success: successCreate, createdProduct, error: errorCreate, loading: loadingCreate } = productCreate
 
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listProducts())
+
     } else {
       history.push('/')
     }
@@ -34,7 +35,7 @@ const ProductListScreen = ({ history }) => {
       dispatch({ type: PRODUCT_CREATE_RESET })
     }
 
-  }, [dispatch, history, userInfo, success, successCreate])
+  }, [dispatch, history, userInfo, success, createdProduct, successCreate])
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure?')) {
@@ -58,6 +59,8 @@ const ProductListScreen = ({ history }) => {
           </Button>
         </Col>
       </Row>
+      {errorCreate && (<Message variant='danger'>{errorCreate}</Message>)}
+      {loadingCreate && <Loader />}
       {loading
         ? (<Loader />)
         : error

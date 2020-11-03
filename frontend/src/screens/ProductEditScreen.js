@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { Form, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
@@ -12,7 +13,7 @@ const ProductEditScreen = ({ history, match }) => {
 
   const [name, setName] = useState('')
   const [image, setImage] = useState('')
-  const [imageError, setImageError] = useState('')
+  const [imageError, setImageError] = useState(false)
   const [description, setDescription] = useState('')
   const [instructor, setInstructor] = useState('')
   const [category, setCategory] = useState('')
@@ -49,18 +50,36 @@ const ProductEditScreen = ({ history, match }) => {
     }
   }, [dispatch, history, userInfo, productId, product])
 
-  const types = ['image/jpeg', 'image/png'];
 
-  const imageUploadHandler = (e) => {
-    let selected = e.target.files[0];
+  const imageUploadHandler = async (e) => {
+    //get back an array of files, but we are only uploading a single file
+    const file = e.target.files[0]
+    const formData = new FormData()
+    formData.append('image', file)
 
-    if (selected && types.includes(selected.type)) {
-      setImage(selected);
-      setImageError('');
-    } else {
-      setImage(null);
-      setImageError('Please select an image file (png or jpeg)');
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+
+      const { data } = await axios.post('/api/upload', formData, config)
+
+      setImage(data)
+    } catch (error) {
+      setImageError('Please select an image file (png, jpg or jpeg)')
     }
+    //Frontend checking pictorial app
+
+    // const fileTypes = ['image/jpeg', 'image/png'];
+    // if (selected && fileTypes.includes(selected.type)) {
+    //   setImage(selected);
+    //   setImageError('');
+    // } else {
+    //   setImage(null);
+    //   setImageError('Please select an image file (png or jpeg)');
+    // }
   }
 
   const submitHandler = (e) => {
@@ -130,8 +149,13 @@ const ProductEditScreen = ({ history, match }) => {
                 </Form.Group>
 
                 <Form.Group controlId='image'>
-                  <Form.File id='imageUpload' label='Image' onChange={(e) => imageUploadHandler} />
+                  <Form.Label>Image</Form.Label>
+                  <Form.Control type='text' placeholder='Enter Image URL' value={image} onChange={e => setImage(e.target.value)}
+                  ></Form.Control>
+                  <Form.File id='image-file' label='Choose File' custom onChange={imageUploadHandler} />
                 </Form.Group>
+                {imageError && <Message variant='danger'>{imageError}</Message>}
+
 
                 <Button type='submit' variant='primary' className='my-3'>Update</Button>
 
