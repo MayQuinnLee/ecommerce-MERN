@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-import { Col, Row, Card, ListGroup, Image } from 'react-bootstrap'
+import { Col, Row, Card, ListGroup, Image, Button } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import { PayPalButton } from "react-paypal-button-v2";
 import Message from '../components/Message'
@@ -21,6 +21,9 @@ const OrderScreen = ({ match }) => {
 
   const orderPay = useSelector(state => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
+
+  const userLogin = useSelector(state => state.userLogin)
+  const { userInfo } = userLogin
 
   useEffect(() => {
     const addPayPalScript = async () => {
@@ -49,6 +52,20 @@ const OrderScreen = ({ match }) => {
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult)
     dispatch(payOrder(orderId, paymentResult))
+  }
+
+  const deliveredHandler = async () => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${userInfo.token}` }
+      }
+
+      await axios.put(`/api/orders/${orderId}/deliver`, {}, config)
+
+      dispatch(getOrderDetails(orderId))
+    } catch (error) {
+      console.log(error.response && error.response.data.message ? error.response.data.message : error.message)
+    }
   }
 
   return loading
@@ -163,8 +180,16 @@ const OrderScreen = ({ match }) => {
                 )}
 
               </ListGroup>
-
             </Card>
+
+            {userInfo && userInfo.isAdmin && order.isDelivered
+              ? (<Button className='my-3 btn-block' variant='dark' disabled onClick={deliveredHandler}>
+                Delivered</Button>)
+              : userInfo && userInfo.isAdmin && order.isPaid
+                ? (<Button className='my-3 btn-block' variant='dark' onClick={deliveredHandler}>
+                  Mask as Deliver</Button>)
+                : (<></>)}
+
           </Col>
         </Row>
       </>
