@@ -17,9 +17,7 @@ const app = express()
 
 app.use(express.json()) //Middleware that will allow the backend to accept json body (userController) 
 
-app.get('/', (req, res) => {
-  res.send('API is running...')
-})
+
 
 app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
@@ -31,6 +29,18 @@ app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_I
 // dirname only works in commonJS, not ES6, hence we create a const and mimic it
 const __dirname = path.resolve()
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/frontend/build')))
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '/frontend/build/index.html'))
+  })
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...')
+  })
+}
 
 app.use(notFound)
 app.use(errorHandler)
