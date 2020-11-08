@@ -2,6 +2,7 @@ import path from 'path'
 import express from 'express'
 import colors from 'colors'
 import dotenv from 'dotenv'
+import morgan from 'morgan'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import connectDB from './config/db.js'
 import productRoutes from './routes/productRoutes.js'
@@ -15,8 +16,11 @@ connectDB()
 
 const app = express()
 
-app.use(express.json()) //Middleware that will allow the backend to accept json body (userController) 
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+}
 
+app.use(express.json()) //Middleware that will allow the backend to accept json body (userController) 
 
 
 app.use('/api/products', productRoutes)
