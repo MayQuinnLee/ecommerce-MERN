@@ -4,20 +4,22 @@ import { Row, Col } from 'react-bootstrap';
 import Product from '../components/Product';
 import { listProducts } from '../actions/productActions'
 import Loader from '../components/Loader'
+import Paginate from '../components/Paginate'
 import Message from '../components/Message'
 
 
 const HomeScreen = ({ match }) => {
   const keyword = match.params.keyword //connected with app.js
+  const pageNumber = match.params.pageNumber || 1 //connected with app.js
 
   const dispatch = useDispatch()
   const productList = useSelector(state => state.productList)
-  const { loading, error, products } = productList
+  const { loading, error, products, page, pages } = productList
 
   useEffect(() => {
-    dispatch(listProducts(keyword))
+    dispatch(listProducts(keyword, pageNumber))
   }
-    , [dispatch, keyword])
+    , [dispatch, keyword, pageNumber])
 
   return (
     <>
@@ -27,13 +29,16 @@ const HomeScreen = ({ match }) => {
         : error
           ? <Message variant='danger' children={error} />
           :
-          <Row>
-            {products.map(product => (
-              <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-                <Product product={product} />
-              </Col>
-            ))}
-          </Row>
+          <>
+            <Row>
+              {products.map(product => (
+                <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                  <Product product={product} />
+                </Col>
+              ))}
+            </Row>
+            <Paginate page={page} pages={pages} keyword={keyword ? keyword : ''}></Paginate>
+          </>
       }
     </>
   );
