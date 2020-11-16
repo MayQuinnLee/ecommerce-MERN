@@ -37,7 +37,7 @@ const HomeScreen = ({ match }) => {
                 </Col>
               ))}
             </Row>
-            <Paginate page={page} pages={pages} keyword={keyword ? keyword : ''}></Paginate>
+            <Paginate page={page} pages={pages} keyword={keyword ? keyword : ''} productList={match.path.includes('productlist')}></Paginate>
           </>
       }
     </>

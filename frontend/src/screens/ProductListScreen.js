@@ -8,8 +8,9 @@ import Paginate from '../components/Paginate'
 import { listProducts, deleteProduct, createProduct } from '../actions/productActions'
 import { PRODUCT_CREATE_RESET } from '../constants/productConstants'
 
-const ProductListScreen = ({ match, history }) => {
+const ProductListScreen = ({ match, history, location }) => {
   const pageNumber = match.params.pageNumber || 1
+
 
   const dispatch = useDispatch()
 
@@ -38,7 +39,7 @@ const ProductListScreen = ({ match, history }) => {
       dispatch({ type: PRODUCT_CREATE_RESET })
     }
 
-  }, [dispatch, history, userInfo, success, createdProduct, successCreate, pageNumber])
+  }, [dispatch, history, userInfo, success, createdProduct, successCreate, pageNumber, match])
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure?')) {
@@ -103,7 +104,7 @@ const ProductListScreen = ({ match, history }) => {
                   ))}
                 </tbody>
               </Table >
-              <Paginate page={page} pages={pages} isAdmin={true} />
+              <Paginate page={page} pages={pages} productList={match.path.includes('productlist')} />
             </>)
       }
     </>
