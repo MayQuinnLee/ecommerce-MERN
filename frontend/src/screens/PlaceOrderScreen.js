@@ -18,7 +18,7 @@ const PlaceOrderScreen = ({ history }) => {
 
   cart.itemsPrice = addDecimals(cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0))
   cart.taxPrice = addDecimals(Number(cart.itemsPrice * 0.16))
-  cart.totalPrice = addDecimals(Number(cart.itemsPrice) + Number(cart.taxPrice))
+  cart.totalPrice = cart.itemsPrice > 50 ? addDecimals(Number(cart.itemsPrice) + Number(cart.taxPrice)) - 10 : addDecimals(Number(cart.itemsPrice) + Number(cart.taxPrice))
 
   const orderCreate = useSelector(state => state.orderCreate)
   const { success, order, error } = orderCreate
@@ -123,7 +123,12 @@ const PlaceOrderScreen = ({ history }) => {
                   <Col>${cart.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
-
+              {cart.itemsPrice > 50 && <ListGroup.Item>
+                <Row>
+                  <Col>Discount</Col>
+                  <Col>( $10 )</Col>
+                </Row>
+              </ListGroup.Item>}
               <ListGroup.Item>
                 <Row>
                   <Col>Total Price</Col>
